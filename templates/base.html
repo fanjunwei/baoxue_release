@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>{% block title %}暴雪版本发布系统{% endblock %}</title>
+    <link href="css/smoothness/jquery-ui-1.10.4.custom.css" rel="stylesheet">
+    <script src="js/jquery-1.10.2.js"></script>
+    <script src="js/jquery-ui-1.10.4.custom.js"></script>
+    <style type="text/css">
+        a {
+            color: blue;
+        }
+
+        .msg .error {
+            color: red;
+        }
+
+        .msg .success {
+            color: #5cb531;
+            font-weight: bold;
+        }
+        h1 {
+            text-align: center;
+        }
+        .path
+        {
+            font-size: 12px;
+        }
+        table
+        {
+            margin: auto;
+        }
+    </style>
+    {% block header %}{% endblock %}
+</head>
+<body>
+<h1>暴雪版本发布系统</h1>
+<div>
+    <a href="{% url 'branch_manage' %}">版本管理</a>
+</div>
+<hr>
+{% if messages %}
+    <div id="static_messages" class="msg" style="font-size: small">
+        {% for message in messages %}
+            <div{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</div>
+        {% endfor %}
+    </div>
+{% endif %}
+{% block main %}{% endblock %}
+</body>
+</html>

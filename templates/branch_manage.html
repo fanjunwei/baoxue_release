@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block main %}
+    <div class="path">版本管理</div>
+    <br>
+    <form method="post" action="{% url 'branch_manage' %}">
+        <table>
+            <tr>
+                <td colspan="2">基础版本添加</td>
+            </tr>
+            <tr>
+                <td><label for="project">项目名</label></td>
+                <td><input type="text" id="project" name="project"></td>
+            </tr>
+               <tr>
+                <td><label for="project">客户名</label></td>
+                <td><input type="text" id="project" name="project"></td>
+            </tr>
+        </table>
+    </form>
+
+{% endblock %}
