@@ -7,6 +7,10 @@ class Branch(models.Model):
     branch_number = models.CharField(max_length=255)
     full_name = models.CharField(max_length=255)
     version_number = models.CharField(max_length=255)
+    description = models.TextField(max_length=1024)
+    create_time = models.DateTimeField(auto_now_add=True)
+    modify_time = models.DateTimeField(auto_now=True)
+    decompress_time = models.DateTimeField(null=True)
 
 
 class SubBranch(models.Model):
@@ -15,6 +19,9 @@ class SubBranch(models.Model):
     timestamp = models.IntegerField(default=0)
     is_ex = models.BooleanField(default=False)
     released = models.BooleanField(default=False)
+    description = models.TextField(max_length=1024)
+    create_time = models.DateTimeField(auto_now_add=True)
+    modify_time = models.DateTimeField(auto_now=True)
 
 
 class SubBranchExLink(models.Model):
@@ -22,9 +29,18 @@ class SubBranchExLink(models.Model):
     sub_branch_ex = models.ForeignKey(SubBranch, related_name='sub_branch_ex_link_sub_branch_ex')
 
 
-class Change(models.Model):
+class ChangeGroup(models.Model):
     sub_branch = models.ForeignKey(SubBranch)
     type = models.CharField(max_length=100)
+    type_ex = models.CharField(max_length=100, null=True)
+    description = models.TextField(max_length=1024)
+    create_time = models.DateTimeField(auto_now_add=True)
+    modify_time = models.DateTimeField(auto_now=True)
+    order = models.IntegerField()
+
+
+class ChangeItem(models.Model):
+    change_group = models.ForeignKey(ChangeGroup)
     p1 = models.CharField(max_length=1000)
     p2 = models.CharField(max_length=1000)
     p3 = models.CharField(max_length=1000)
@@ -35,10 +51,25 @@ class Change(models.Model):
     p8 = models.CharField(max_length=1000)
     p9 = models.CharField(max_length=1000)
     p10 = models.CharField(max_length=1000)
+    description = models.TextField(max_length=1024)
+    create_time = models.DateTimeField(auto_now_add=True)
+    modify_time = models.DateTimeField(auto_now=True)
 
 
 class File(models.Model):
+    change_item = models.ForeignKey(ChangeItem)
     file_name = models.CharField(max_length=255)
     path = models.CharField(max_length=255)
-    time = models.DateTimeField(auto_now_add=True)
+    create_time = models.DateTimeField(auto_now_add=True)
+    modify_time = models.DateTimeField(auto_now=True)
+    img_width = models.IntegerField(null=True)
+    img_height = models.IntegerField(null=True)
+    package_name = models.CharField(max_length=255)
 
+
+class Upload(models.Model):
+    file_name = models.CharField(max_length=255)
+    path = models.CharField(max_length=255)
+    img_width = models.IntegerField(null=True)
+    img_height = models.IntegerField(null=True)
+    package_name = models.CharField(max_length=255)
