@@ -1,16 +1,35 @@
 from django.db import models
 
 # Create your models here.
+class Logo(models.Model):
+    name = models.CharField(max_length=255, unique=True)
+    prefix = models.CharField(max_length=100)
+    uboot_build_list = models.CharField(max_length=255)
+    kernel_build_name = models.CharField(max_length=255)
+
+
+class LogoFile(models.Model):
+    logo = models.ForeignKey(Logo)
+    file_name = models.CharField(max_length=255)
+
+
 class Branch(models.Model):
     project = models.CharField(max_length=255)
     custom = models.CharField(max_length=255)
     branch_number = models.CharField(max_length=255)
     full_name = models.CharField(max_length=255)
+    file_name = models.CharField(max_length=255)
     version_number = models.CharField(max_length=255)
     description = models.TextField(max_length=1024)
     create_time = models.DateTimeField(auto_now_add=True)
     modify_time = models.DateTimeField(auto_now=True)
     decompress_time = models.DateTimeField(null=True)
+    screen_width = models.IntegerField()
+    screen_height = models.IntegerField()
+    logo_name = models.CharField(max_length=100)
+
+    class Meta:
+        unique_together = (('project', 'custom', 'branch_number'),)
 
 
 class SubBranch(models.Model):
@@ -22,6 +41,9 @@ class SubBranch(models.Model):
     description = models.TextField(max_length=1024)
     create_time = models.DateTimeField(auto_now_add=True)
     modify_time = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        unique_together = (('branch', 'sub_branch_name', 'timestamp'),)
 
 
 class SubBranchExLink(models.Model):
@@ -56,7 +78,7 @@ class ChangeItem(models.Model):
     modify_time = models.DateTimeField(auto_now=True)
 
 
-class File(models.Model):
+class ChangeItemFile(models.Model):
     change_item = models.ForeignKey(ChangeItem)
     file_name = models.CharField(max_length=255)
     path = models.CharField(max_length=255)
@@ -69,7 +91,7 @@ class File(models.Model):
 
 class Upload(models.Model):
     file_name = models.CharField(max_length=255)
-    path = models.CharField(max_length=255)
+    save_name = models.CharField(max_length=255)
     img_width = models.IntegerField(null=True)
     img_height = models.IntegerField(null=True)
-    package_name = models.CharField(max_length=255)
+    package_name = models.CharField(max_length=255, null=True)

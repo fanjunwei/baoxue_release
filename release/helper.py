@@ -1,4 +1,7 @@
+import json
 import re
+from django.http import HttpResponse
+import os
 
 __author__ = 'fanjunwei'
 
@@ -57,3 +60,54 @@ def split_branch_full_name(full_name):
         'custom': custom,
         'branch_number': branch_number,
     }
+
+
+def JsonResponse(success, message=None, result=None):
+    map = {'success': success}
+    if not result == None:
+        map['result'] = result
+    if not message == None:
+        map['message'] = message
+    return HttpResponse(json.dumps(map), 'application/json')
+
+
+def getImageSize(path):
+    pip = os.popen('identify %s' % path)
+    res = pip.readline()
+    pip.close()
+    size_re = re.compile('\S* \S* (\S*)')
+    match = size_re.search(res)
+    if match:
+        sizex = match.groups()[0]
+        size = sizex.lower().split('x')
+        if len(size) == 2:
+            return int(size[0]), int(size[1])
+
+    return None, None
+
+
+def getFileType(name):
+    n, e = os.path.splitext(name)
+    e = e.lower()
+    if e == '.jpg' or e == '.bmp' or e == '.png' or e == '.gif':
+        return 'image'
+    elif e == '.apk':
+        return 'apk'
+    else:
+        return None
+
+
+def getApkPackageName(path):
+    try:
+        pop = os.popen('aapt d badging ' + path)
+        line = pop.readline()
+        pop.close()
+        re_name = re.compile(r"name=\'(.*?)\'")
+        match = re_name.search(line)
+        if match:
+            packageName = match.groups()[0]
+            return packageName
+    except:
+        pass
+
+    return None

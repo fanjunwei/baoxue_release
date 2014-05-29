@@ -4,8 +4,10 @@
     <meta charset="utf-8">
     <title>{% block title %}暴雪版本发布系统{% endblock %}</title>
     <link href="{{ STATIC_URL }}css/smoothness/jquery-ui-1.10.4.custom.css" rel="stylesheet">
+    <link href="{{ STATIC_URL }}css/uploadify.css" rel="stylesheet">
     <script src="{{ STATIC_URL }}js/jquery-1.10.2.js"></script>
     <script src="{{ STATIC_URL }}js/jquery.filedrop.js"></script>
+    <script src="{{ STATIC_URL }}js/jquery.uploadify.js"></script>
     <script src="{{ STATIC_URL }}js/jquery-ui-1.10.4.custom.js"></script>
     <style type="text/css">
         a {
@@ -20,25 +22,66 @@
             color: #5cb531;
             font-weight: bold;
         }
+
         h1 {
             text-align: center;
         }
-        .path
-        {
+
+        .path {
             font-size: 12px;
         }
-        table
-        {
+
+        table {
             margin: auto;
+        }
+
+        .upload_result {
+            border: none;
+            color: green;
+            font-size: 15px;
+        }
+
+        table {
+            border-collapse: collapse;
+        }
+
+        .highlight_line {
+            background-color: #EDF5FF;
+        }
+
+        .normal_table {
+            width: 90%;
+        }
+
+        .normal_table thead {
+            color: White;
+            background-color: #507CD1;
+            font-weight: bold;
+        }
+
+        .normal_table_line1 {
+            background-color: #EFF3FB;
+        }
+
+        .normal_table_line2 {
+            background-color: White;
+        }
+
+        .nowrap {
+            word-break: keep-all;
+            white-space: nowrap;
         }
     </style>
     {% block header %}{% endblock %}
 </head>
 <body>
 <h1>暴雪版本发布系统</h1>
+
 <div style="text-align: right"><a href="{% url 'logout' %}">退出</a></div>
 <div>
-    <a href="{% url 'branch_manage' %}">版本管理</a>
+    <a href="{% url 'logo_manage' %}">基础Logo管理</a>&nbsp;&nbsp;
+    <a href="{% url 'branch_manage' %}">版本管理</a>&nbsp;&nbsp;
+
 </div>
 <hr>
 {% if messages %}

@@ -1,0 +1,110 @@
+{% extends 'base.html' %}
+{% block header %}
+    <script type="text/javascript">
+        function setup_upload() {
+            $('#upload_area').uploadify({
+                'buttonText': '添加文件',
+                'fileTypeExts': "*.bmp",
+                'multi': true,
+                'formData': {},
+                'swf': '{{ STATIC_URL  }}images/uploadify.swf',
+                'uploader': '/upload/',
+                'onUploadSuccess': function (file, data, response) {
+                    if (response) {
+                        var result = eval('(' + data + ')');
+                        if (result.success) {
+                            addUploadResult(result.result.id, result.result.name);
+                        }
+                    }
+
+                }
+            });
+        }
+        function removeItem(id) {
+            $('#file_item' + id).remove();
+        }
+        function addUploadResult(id, name) {
+            res = [];
+            res.push('<div id="file_item' + id + '">');
+            res.push('<input type="hidden" name="upload_file" value="' + id + '">');
+            res.push('<div>');
+            res.push('<a href="javascript:removeItem(' + id + ')">[删除]</a>');
+            res.push(name);
+            res.push('</div>');
+            res.push('</div>');
+            text = res.join('');
+            $('#upload_area_msg').append(text);
+
+        }
+        $(function () {
+            setup_upload();
+
+        });
+    </script>
+{% endblock %}
+{% block main %}
+    <div class="path">基础Logo管理</div>
+    <br>
+    <form method="post" action="{% url 'logo_manage' %}">
+        <input type="hidden" name="id" id="id" value="">
+
+
+        <table style="border: solid green 1px">
+            <tr>
+                <td colspan="2">基础Logo添加</td>
+            </tr>
+            <tr>
+                <td><label for="name">名称</label></td>
+                <td><input type="text" id="name" name="name" value="{{ name }}"></td>
+            </tr>
+            <tr>
+                <td><label for="prefix">前缀</label></td>
+                <td><input type="text" id="prefix" name="prefix" value="{{ prefix }}"></td>
+            </tr>
+            <tr>
+                <td><label for="uboot_build_list">uboot编译列表</label></td>
+                <td><textarea type="text" cols="100" rows="5" id="uboot_build_list"
+                              name="uboot_build_list">{{ uboot_build_list }}</textarea></td>
+            </tr>
+            <tr>
+                <td><label for="kernel_build_name">kernel编译</label></td>
+                <td><input type="text" id="kernel_build_name" name="kernel_build_name" value="{{ kernel_build_name }}">
+                </td>
+            </tr>
+            <tr>
+                <td><label for="file">文件</label></td>
+                <td>
+                    <div id="upload_area_msg"></div>
+                    <div id="upload_area"></div>
+                </td>
+            </tr>
+
+            <tr>
+                <td colspan="2"><input type="submit" value="添加"></td>
+            </tr>
+        </table>
+    </form>
+    <table class="normal_table" border="1" align="center" style="margin-top: 10px;">
+        <thead>
+        <th>名称</th>
+        <th>前缀</th>
+        <th>操作</th>
+        </thead>
+        <tbody>
+        {% for i in logo_list %}
+            <tr class="{% cycle 'normal_table_line1' 'normal_table_line2' %}">
+                <td class="nowrap">
+                    {{ i.name }}
+                </td>
+                <td class="nowrap">
+                    {{ i.prefix }}
+                </td>
+                <td class="nowrap" style="width: 120px">
+                    [编辑]&nbsp;&nbsp;[删除]
+                </td>
+            </tr>
+        {% endfor %}
+
+        </tbody>
+    </table>
+{% endblock %}
