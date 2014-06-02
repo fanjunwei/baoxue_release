@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% block header %}
+    <script type="text/javascript">
+    </script>
+{% endblock %}
+{% block main %}
+    <div class="path"><a href="{% url 'logo_manage' '' %}">基础Logo管理</a>--浏览Logo</div>
+    <h1>{{ db_logo.name }}</h1>
+    <br>
+    <div style="text-align: center">Uboot</div>
+    <table border="1">
+        {% for i in list %}
+            {% cycle '<tr>' '' '' %}
+            <td style="text-align: center;width: 200px;height: 105px">
+                <a href="{{ logo_base_url }}/{{ i }}"> <img style="max-height: 100px;max-width: 100px"
+                                                            src="{{ logo_base_url }}/{{ i }}"></a><br>
+
+                <div>{{ i }}</div>
+            </td>
+            {% cycle  '' '' '</tr>' %}
+        {% endfor %}
+    </table>
+    <br><br>
+    <div style="text-align: center">Kernel</div>
+    <div style="text-align: center">
+        <a href="{{ logo_base_url }}/{{ kernel }}"> <img style="max-height: 100px;max-width: 100px"
+                                                         src="{{ logo_base_url }}/{{ kernel }}"><br>
+        </a>
+
+        <div>{{ kernel }}</div>
+    </div>
+
+{% endblock %}

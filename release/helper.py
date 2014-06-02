@@ -55,11 +55,7 @@ def split_branch_full_name(full_name):
         custom = None
         branch_number = None
 
-    return {
-        'project': project,
-        'custom': custom,
-        'branch_number': branch_number,
-    }
+    return project, custom, branch_number
 
 
 def JsonResponse(success, message=None, result=None):
@@ -111,3 +107,7 @@ def getApkPackageName(path):
         pass
 
     return None
+
+
+def delDir(dir):
+    os.system('rm -r %s >/dev/null 2>&1' % dir)

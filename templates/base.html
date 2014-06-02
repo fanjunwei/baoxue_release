@@ -72,6 +72,13 @@
             white-space: nowrap;
         }
     </style>
+    <script type="text/javascript">
+        function deleteConfim(url) {
+            if (confirm("确认删除")) {
+                window.location.href = url;
+            }
+        }
+    </script>
     {% block header %}{% endblock %}
 </head>
 <body>
@@ -79,8 +86,8 @@
 
 <div style="text-align: right"><a href="{% url 'logout' %}">退出</a></div>
 <div>
-    <a href="{% url 'logo_manage' %}">基础Logo管理</a>&nbsp;&nbsp;
-    <a href="{% url 'branch_manage' %}">版本管理</a>&nbsp;&nbsp;
+    <a href="{% url 'logo_manage' '' %}">基础Logo管理</a>&nbsp;&nbsp;
+    <a href="{% url 'branch_manage' '' %}">版本管理</a>&nbsp;&nbsp;
 
 </div>
 <hr>

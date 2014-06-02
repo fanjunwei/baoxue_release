@@ -13,7 +13,6 @@
                     if (response) {
                         var result = eval('(' + data + ')');
                         if (result.success) {
-                            alert(result.result.id);
                             $('#upload_file_id').val(result.result.id);
                             $('#upload_area_msg').text(result.result.name);
                         }
@@ -27,40 +26,127 @@
         }
         $(function () {
             setup_upload();
+            setupSetSize();
 
         });
+        function setupSetSize() {
+            $('#logo_name').change(function () {
+                var width = $(this).children('option:selected').attr('width');
+                var height = $(this).children('option:selected').attr('height');
+                $('#screen_width').val(width);
+                $('#screen_height').val(height);
+            })
+        }
     </script>
 {% endblock %}
 {% block main %}
     <div class="path">版本管理|基础版本</div>
     <br>
-    <form method="post" action="{% url 'branch_manage' %}">
+    <form method="post" action="{% url 'branch_manage' id %}">
         <input type="hidden" name="id" id="id" value="">
         <input type="hidden" name="upload_file_id" id="upload_file_id" value="">
 
         <table style="border: solid green 1px">
             <tr>
-                <td colspan="2">基础版本添加</td>
+                {% if id %}
+                    <td colspan="2">基础版本修改</td>
+                {% else %}
+                    <td colspan="2">基础版本添加</td>
+                {% endif %}
             </tr>
             <tr>
-                <td><label for="branch">分支名</label></td>
-                <td><input type="text" id="branch" name="branch">格式：A22_BXT_01</td>
+                <td><label for="full_name">分支名</label></td>
+                <td><input type="text" id="full_name" name="full_name" value="{{ full_name }}">格式：A22_BXT_01</td>
+            </tr>
+            <tr>
+                <td><label for="logo_name">Logo</label></td>
+                <td><select name="logo_name" id="logo_name">
+                    <option value="0">请选择</option>
+                    {% for i in logos %}
+                        <option width="{{ i.width }}" height="{{ i.height }}"
+                                value="{{ i.name }}"
+                                {% ifequal i.name logo_name %}selected="selected"{% endifequal %}>{{ i.name }}</option>
+                    {% endfor %}
+                </select></td>
+            </tr>
+            <tr>
+                <td><label for="screen_width">分辨率</label></td>
+                <td><input type="text" id="screen_width" name="screen_width" value="{{ screen_width }}">X
+                    <input type="text" id="screen_height" name="screen_height" value="{{ screen_height }}"></td>
+            </tr>
+            <tr>
+                <td><label for="version_number">版本号</label></td>
+                <td><input type="text" id="version_number" name="version_number" value="{{ version_number }}">
+                </td>
             </tr>
             <tr>
                 <td><label for="file">文件</label></td>
                 <td>
-                    <div id="upload_area_msg"></div>
+                    <div id="upload_area_msg">{% if id %}如果不修改文件则不需上传{% endif %}</div>
                     <div id="upload_area"></div>
                 </td>
             </tr>
             <tr>
                 <td><label for="description">说明</label></td>
-                <td><textarea type="text" cols="100" rows="5" id="description" name="description"></textarea></td>
+                <td><textarea type="text" cols="100" rows="5" id="description"
+                              name="description">{{ description }}</textarea></td>
             </tr>
             <tr>
-                <td colspan="2"><input type="submit" value="添加"></td>
+                <td colspan="2">
+                    {% if id %}
+                        <input type="submit" value="修改">
+                    {% else %}
+                        <input type="submit" value="添加">
+                    {% endif %}
+                </td>
             </tr>
         </table>
     </form>
+    {% if list %}
+        <table class="normal_table" border="1" align="center" style="margin-top: 10px;">
+            <thead>
+            <th>分支名</th>
+            <th>版本号</th>
+            <th>Logo</th>
+            <th>分辨率</th>
+            <th>添加时间</th>
+            <th>修改时间</th>
+            <th>说明</th>
+            <th>操作</th>
+            </thead>
+            <tbody>
+            {% for i in list %}
+                <tr class="{% cycle 'normal_table_line1' 'normal_table_line2' %}">
+                    <td class="nowrap">
+                        {{ i.full_name }}
+                    </td>
+                    <td class="nowrap">
+                        {{ i.version_number }}
+                    </td>
+                    <td class="nowrap">
+                        {{ i.logo_name }}
+                    </td>
+                    <td class="nowrap">
+                        {{ i.screen_width }}X{{ i.screen_height }}
+                    </td>
+                    <td class="nowrap">
+                        {{ i.create_time|date:"Y-m-d H:i:s" }}
+                    </td>
+                    <td class="nowrap">
+                        {{ i.modify_time|date:"Y-m-d H:i:s" }}
+                    </td>
+                    <td class="nowrap">
+                        {{ i.description|escape|linebreaks }}
+                    </td>
+                    <td class="nowrap" style="width: 120px">
+                        <a href="{% url 'branch_manage' i.id %}">[编辑]</a>&nbsp;&nbsp;
+                        <a href="javascript:deleteConfim('{% url 'branch_delete' i.id %}')">[删除]</a>&nbsp;&nbsp;
+                    </td>
+                </tr>
+            {% endfor %}
+
+            </tbody>
+        </table>
+    {% endif %}
 
 {% endblock %}

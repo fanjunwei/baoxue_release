@@ -21,14 +21,17 @@
             });
         }
         function removeItem(id) {
-            $('#file_item' + id).remove();
+            $('#' + id).remove();
+        }
+        function clearItems() {
+            $('#upload_area_msg').text('');
         }
         function addUploadResult(id, name) {
             res = [];
             res.push('<div id="file_item' + id + '">');
             res.push('<input type="hidden" name="upload_file" value="' + id + '">');
             res.push('<div>');
-            res.push('<a href="javascript:removeItem(' + id + ')">[删除]</a>');
+            res.push('<a href="javascript:removeItem(\'file_item' + id + '\')">[删除]</a>');
             res.push(name);
             res.push('</div>');
             res.push('</div>');
@@ -45,13 +48,19 @@
 {% block main %}
     <div class="path">基础Logo管理</div>
     <br>
-    <form method="post" action="{% url 'logo_manage' %}">
+    <form method="post" action="{% url 'logo_manage' id %}">
         <input type="hidden" name="id" id="id" value="">
 
 
         <table style="border: solid green 1px">
             <tr>
-                <td colspan="2">基础Logo添加</td>
+                <td colspan="2">
+                    {% if edit_mode %}
+                        基础Logo修改
+                    {% else %}
+                        基础Logo添加
+                    {% endif %}
+                </td>
             </tr>
             <tr>
                 <td><label for="name">名称</label></td>
@@ -74,37 +83,64 @@
             <tr>
                 <td><label for="file">文件</label></td>
                 <td>
-                    <div id="upload_area_msg"></div>
+                    <div><a href="javascript:clearItems()">[清空]</a></div>
+                    <div id="upload_area_msg">
+                        {% for i in db_logo_files %}
+                            <div id="uploaded_file_item{{ i.id }}">
+                                <input type="hidden" name="uploaded_file" value="{{ i.id }}">
+
+                                <div>
+                                    <a href="javascript:removeItem('uploaded_file_item{{ i.id }}')">[删除]</a>
+                                    {{ i.file_name }}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
                     <div id="upload_area"></div>
                 </td>
             </tr>
 
             <tr>
-                <td colspan="2"><input type="submit" value="添加"></td>
+
+                <td colspan="2">
+                    {% if edit_mode %}
+                        <input type="submit" value="修改">
+                    {% else %}
+                        <input type="submit" value="添加">
+                    {% endif %}
+
+                </td>
             </tr>
         </table>
     </form>
-    <table class="normal_table" border="1" align="center" style="margin-top: 10px;">
-        <thead>
-        <th>名称</th>
-        <th>前缀</th>
-        <th>操作</th>
-        </thead>
-        <tbody>
-        {% for i in logo_list %}
-            <tr class="{% cycle 'normal_table_line1' 'normal_table_line2' %}">
-                <td class="nowrap">
-                    {{ i.name }}
-                </td>
-                <td class="nowrap">
-                    {{ i.prefix }}
-                </td>
-                <td class="nowrap" style="width: 120px">
-                    [编辑]&nbsp;&nbsp;[删除]
-                </td>
-            </tr>
-        {% endfor %}
+    {% if logo_list %}
+        <table class="normal_table" border="1" align="center" style="margin-top: 10px;">
+            <thead>
+            <th>名称</th>
+            <th>前缀</th>
+            <th>分辨率</th>
+            <th>操作</th>
+            </thead>
+            <tbody>
+            {% for i in logo_list %}
+                <tr class="{% cycle 'normal_table_line1' 'normal_table_line2' %}">
+                    <td class="nowrap">
+                        <a href="{% url 'logo_browse' i.id %}"> {{ i.name }}</a>
+                    </td>
+                    <td class="nowrap">
+                        {{ i.prefix }}
+                    </td>
+                    <td class="nowrap">
+                        {{ i.width }}X{{ i.height }}
+                    </td>
+                    <td class="nowrap" style="width: 120px">
+                        <a href="{% url 'logo_manage' i.id %}">[编辑]</a>&nbsp;&nbsp;
+                        <a href="javascript:deleteConfim('{% url 'logo_delete' i.id %}')">[删除]</a>&nbsp;&nbsp;
+                    </td>
+                </tr>
+            {% endfor %}
 
-        </tbody>
-    </table>
+            </tbody>
+        </table>
+    {% endif %}
 {% endblock %}
